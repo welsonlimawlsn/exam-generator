@@ -43,23 +43,31 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         ZonedDateTime expirationTimeUTC = ZonedDateTime.now(ZoneOffset.UTC).plus(EXPIRATION_TIME, ChronoUnit.MILLIS);
-        String token = Jwts.builder()
-                .setSubject(((ApplicationUser) authResult.getPrincipal()).getUsername())
-                .setExpiration(Date.from(expirationTimeUTC.toInstant()))
-                .signWith(SignatureAlgorithm.HS256, SECRET)
-                .compact();
-        token = TOKEN_PREFIX + token;
-        String tokenJson = new StringBuilder(300)
-                .append("{\"token\":")
-                .append(addQuotes(token))
-                .append(",\"exp\":")
-                .append(addQuotes(expirationTimeUTC.toString())).append("}").toString();
-        response.getWriter().write(tokenJson);
-        response.addHeader("Content-Type", "application/json;charset=UTF-8");
-        response.addHeader(HEADER_STRING, token);
+        String token = generateToken(((ApplicationUser) authResult.getPrincipal()).getUsername(), Date.from(expirationTimeUTC.toInstant()));
+        addTokenToHeader(response, token);
+        response.getWriter().write(createJsonForToken(token, expirationTimeUTC.toString()));
     }
 
     private String addQuotes(String value) {
         return new StringBuilder(300).append("\"").append(value).append("\"").toString();
+    }
+
+    private String createJsonForToken(String token, String expirationTime) {
+        return new StringBuilder(300)
+                .append("{\"token\":").append(addQuotes(token)).append(",\"exp\":")
+                .append(addQuotes(expirationTime)).append("}").toString();
+    }
+
+    private String generateToken(String username, Date expirationTime) {
+        return TOKEN_PREFIX + Jwts.builder()
+                .setSubject(username)
+                .setExpiration(expirationTime)
+                .signWith(SignatureAlgorithm.HS256, SECRET)
+                .compact();
+    }
+
+    private void addTokenToHeader(HttpServletResponse response, String token) {
+        response.addHeader("Content-Type", "application/json;charset=UTF-8");
+        response.addHeader(HEADER_STRING, token);
     }
 }

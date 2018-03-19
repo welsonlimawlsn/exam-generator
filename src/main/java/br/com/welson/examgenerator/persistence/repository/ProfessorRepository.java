@@ -6,6 +6,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.Optional;
 
 public interface ProfessorRepository extends PagingAndSortingRepository<Professor, Long> {
-
     Optional<Professor> findByEmail(String email);
 }
