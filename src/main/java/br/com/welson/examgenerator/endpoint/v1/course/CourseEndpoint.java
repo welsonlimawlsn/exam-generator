@@ -1,9 +1,9 @@
 package br.com.welson.examgenerator.endpoint.v1.course;
 
+import br.com.welson.examgenerator.exception.ResourceNotFoundException;
 import br.com.welson.examgenerator.persistence.model.Course;
 import br.com.welson.examgenerator.persistence.repository.CourseRepository;
 import br.com.welson.examgenerator.util.EndpointUtil;
-import br.com.welson.examgenerator.util.ExceptionUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -35,7 +35,7 @@ public class CourseEndpoint {
     @ApiOperation(value = "Return a course based on it's id", response = Course.class)
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> getCourseById(@PathVariable long id) {
-        return new ResponseEntity<>(courseRepository.findById(id).orElseThrow(ExceptionUtil::throwResourceNotFoundException), HttpStatus.OK);
+        return new ResponseEntity<>(courseRepository.findById(id).orElseThrow(ResourceNotFoundException::new), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Return a list of courses related to professor", response = Course.class)
@@ -47,7 +47,7 @@ public class CourseEndpoint {
     @ApiOperation(value = "Delete a course and return 200 OK without body")
     @DeleteMapping(path = "{id}")
     public ResponseEntity<?> deleteCourse(@PathVariable long id) {
-        courseRepository.delete(courseRepository.findById(id).orElseThrow(ExceptionUtil::throwResourceNotFoundException));
+        courseRepository.delete(courseRepository.findById(id).orElseThrow(ResourceNotFoundException::new));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -55,7 +55,7 @@ public class CourseEndpoint {
     @ApiOperation(value = "Update course and return 200 OK without body")
     @PutMapping
     public ResponseEntity<?> updateCourse(@Valid @RequestBody Course course) {
-        courseRepository.findOne(course).orElseThrow(ExceptionUtil::throwResourceNotFoundException);
+        courseRepository.findOne(course).orElseThrow(ResourceNotFoundException::new);
         courseRepository.save(course);
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -10,7 +10,6 @@ public class Professor extends AbstractEntity {
 
     @NotEmpty(message = "The field name cannot be empty")
     private String name;
-
     @Email(message = "This email is not valid")
     @NotEmpty(message = "The field email cannot be empty")
     @Column(unique = true)
@@ -30,5 +29,37 @@ public class Professor extends AbstractEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+
+    public static final class ProfessorBuilder {
+        private Professor professor;
+
+        private ProfessorBuilder() {
+            professor = new Professor();
+        }
+
+        public static ProfessorBuilder newProfessor() {
+            return new ProfessorBuilder();
+        }
+
+        public ProfessorBuilder name(String name) {
+            professor.setName(name);
+            return this;
+        }
+
+        public ProfessorBuilder id(Long id) {
+            professor.setId(id);
+            return this;
+        }
+
+        public ProfessorBuilder email(String email) {
+            professor.setEmail(email);
+            return this;
+        }
+
+        public Professor build() {
+            return professor;
+        }
     }
 }
