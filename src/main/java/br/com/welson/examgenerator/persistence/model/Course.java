@@ -2,6 +2,7 @@ package br.com.welson.examgenerator.persistence.model;
 
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
@@ -16,6 +17,8 @@ public class Course extends AbstractEntity {
     private String name;
     @ManyToOne(optional = false)
     private Professor professor;
+    @Column(columnDefinition = "boolean default true")
+    private boolean enabled = true;
 
 
     public String getName() {
@@ -32,6 +35,14 @@ public class Course extends AbstractEntity {
 
     public void setProfessor(Professor professor) {
         this.professor = professor;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public static final class CourseBuilder {

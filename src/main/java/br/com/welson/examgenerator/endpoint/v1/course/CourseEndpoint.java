@@ -55,7 +55,7 @@ public class CourseEndpoint {
     @ApiOperation(value = "Update course and return 200 OK without body")
     @PutMapping
     public ResponseEntity<?> updateCourse(@Valid @RequestBody Course course) {
-        courseRepository.findOne(course).orElseThrow(ResourceNotFoundException::new);
+        courseRepository.findById(course.getId()).orElseThrow(ResourceNotFoundException::new);
         courseRepository.save(course);
         return new ResponseEntity<>(HttpStatus.OK);
     }
