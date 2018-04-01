@@ -4,6 +4,7 @@ import br.com.welson.examgenerator.endpoint.v1.ProfessorEndpointTest;
 import br.com.welson.examgenerator.endpoint.v1.course.CourseEndpointTest;
 import br.com.welson.examgenerator.persistence.model.Course;
 import br.com.welson.examgenerator.persistence.model.Question;
+import br.com.welson.examgenerator.persistence.repository.CourseRepository;
 import br.com.welson.examgenerator.persistence.repository.QuestionRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
@@ -32,13 +33,15 @@ import java.util.Optional;
 public class QuestionEndpointTest {
     @MockBean
     private QuestionRepository questionRepository;
+    @MockBean
+    private CourseRepository courseRepository;
     @Autowired
     private TestRestTemplate testRestTemplate;
     private HttpEntity<Void> professorHeader;
     private HttpEntity<Void> wrongHeader;
     private Question question = mockQuestion();
 
-    private static Question mockQuestion() {
+    public static Question mockQuestion() {
         return Question.QuestionBuilder.newQuestion()
                 .id(1L)
                 .title("What is class?")
@@ -67,6 +70,7 @@ public class QuestionEndpointTest {
 //        BDDMockito.when(questionRepository.findById(-1L)).thenThrow(new ResourceNotFoundException());
         BDDMockito.when(questionRepository.listByCourseAndTitle(question.getCourse().getId(), "")).thenReturn(Collections.singletonList(question));
         BDDMockito.when(questionRepository.listByCourseAndTitle(question.getCourse().getId(), "What is class?")).thenReturn(Collections.singletonList(question));
+        BDDMockito.when(courseRepository.findById(question.getCourse().getId())).thenReturn(Optional.of(question.getCourse()));
     }
 
     @Test

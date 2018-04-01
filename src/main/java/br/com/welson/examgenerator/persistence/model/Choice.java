@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Welson Teles on 4/1/2018
@@ -17,9 +18,8 @@ public class Choice extends AbstractEntity {
     @ApiModelProperty(notes = "The title of the choice")
     private String title;
 
-    @NotEmpty(message = "The field correctAnswer must be true or false")
+    @NotNull(message = "The field correctAnswer must be true or false")
     @ApiModelProperty(notes = "Correct answer for the associated question, you can have only one correct answer per question")
-    @Transient
     private boolean correctAnswer;
     @ManyToOne(optional = false)
     private Question question;
@@ -56,5 +56,51 @@ public class Choice extends AbstractEntity {
 
     public void setProfessor(Professor professor) {
         this.professor = professor;
+    }
+
+    public static final class ChoiceBuilder {
+        private Choice choice;
+
+        private ChoiceBuilder() {
+            choice = new Choice();
+        }
+
+        public static ChoiceBuilder newChoice() {
+            return new ChoiceBuilder();
+        }
+
+        public ChoiceBuilder id(Long id) {
+            choice.setId(id);
+            return this;
+        }
+
+        public ChoiceBuilder enabled(boolean enabled) {
+            choice.setEnabled(enabled);
+            return this;
+        }
+
+        public ChoiceBuilder title(String title) {
+            choice.setTitle(title);
+            return this;
+        }
+
+        public ChoiceBuilder correctAnswer(boolean correctAnswer) {
+            choice.setCorrectAnswer(correctAnswer);
+            return this;
+        }
+
+        public ChoiceBuilder question(Question question) {
+            choice.setQuestion(question);
+            return this;
+        }
+
+        public ChoiceBuilder professor(Professor professor) {
+            choice.setProfessor(professor);
+            return this;
+        }
+
+        public Choice build() {
+            return choice;
+        }
     }
 }

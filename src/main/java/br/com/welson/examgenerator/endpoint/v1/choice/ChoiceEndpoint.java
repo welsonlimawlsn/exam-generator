@@ -41,6 +41,12 @@ public class ChoiceEndpoint {
         return new ResponseEntity<>(choiceRepository.findAllByQuestionId(questionId), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Return a choice based on it's id", response = Choice.class)
+    @GetMapping(path = "{id}")
+    public ResponseEntity<?> getChoice(@PathVariable long id) {
+        return new ResponseEntity<>(choiceRepository.findById(id).orElseThrow(ResourceNotFoundException::new), HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Save choice and return 201 CREATED with body", notes = "If this choice is correct answer is true, all other choices' correct answer related to this question will be updated to false", response = Choice.class)
     @PostMapping
     @Transactional
