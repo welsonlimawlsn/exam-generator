@@ -42,7 +42,7 @@ public class CourseEndpoint {
         return new ResponseEntity<>(courseRepository.findById(id).orElseThrow(ResourceNotFoundException::new), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Return a list of courses related to professor", response = Course.class)
+    @ApiOperation(value = "Return a list of courses related to professor", response = Course[].class)
     @GetMapping(path = "/list")
     public ResponseEntity<?> listCourses(@ApiParam("Course name") @RequestParam(value = "name", defaultValue = "") String name) {
         return new ResponseEntity<>(courseRepository.listByName(name), HttpStatus.OK);

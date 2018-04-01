@@ -141,8 +141,9 @@ public class QuestionEndpointTest {
     }
 
     @Test
-    public void createQuestionWhenEverythingIsRightShouldReturn201() {
+    public void createQuestionWhenEverythingIsRightShouldReturn200() throws Exception {
         Question question = questionRepository.findById(1L).get();
+        question.setId(null);
         Assertions.assertThat(createQuestion(question).getStatusCodeValue()).isEqualTo(201);
     }
 
@@ -155,6 +156,7 @@ public class QuestionEndpointTest {
 
     private ResponseEntity<String> createQuestion(Question question) {
         BDDMockito.when(questionRepository.save(question)).thenReturn(question);
-        return testRestTemplate.exchange("/v1/professor/course/question/", HttpMethod.POST, new HttpEntity<>(question, professorHeader.getHeaders()), String.class);
+        return testRestTemplate.exchange("/v1/professor/course/question/", HttpMethod.POST,
+                new HttpEntity<>(question, professorHeader.getHeaders()), String.class);
     }
 }

@@ -47,7 +47,7 @@ public class QuestionEndpoint {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Return a list of question related to course")
+    @ApiOperation(value = "Return a list of question related to course", response = Question[].class)
     @GetMapping(path = "list/{courseId}")
     public ResponseEntity<?> listQuestions(@ApiParam("Question title") @RequestParam(value = "title", defaultValue = "") String title, @PathVariable long courseId) {
         return new ResponseEntity<>(questionRepository.listByCourseAndTitle(courseId, title), HttpStatus.OK);
