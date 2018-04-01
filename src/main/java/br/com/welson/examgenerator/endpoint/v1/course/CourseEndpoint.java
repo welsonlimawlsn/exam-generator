@@ -3,6 +3,7 @@ package br.com.welson.examgenerator.endpoint.v1.course;
 import br.com.welson.examgenerator.exception.ResourceNotFoundException;
 import br.com.welson.examgenerator.persistence.model.Course;
 import br.com.welson.examgenerator.persistence.repository.CourseRepository;
+import br.com.welson.examgenerator.persistence.repository.QuestionRepository;
 import br.com.welson.examgenerator.util.EndpointUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -10,6 +11,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -24,11 +26,13 @@ import javax.validation.Valid;
 public class CourseEndpoint {
 
     private final CourseRepository courseRepository;
+    private final QuestionRepository questionRepository;
     private final EndpointUtil endpointUtil;
 
     @Autowired
-    public CourseEndpoint(CourseRepository courseRepository, EndpointUtil endpointUtil) {
+    public CourseEndpoint(CourseRepository courseRepository, QuestionRepository questionRepository, EndpointUtil endpointUtil) {
         this.courseRepository = courseRepository;
+        this.questionRepository = questionRepository;
         this.endpointUtil = endpointUtil;
     }
 
@@ -46,8 +50,11 @@ public class CourseEndpoint {
 
     @ApiOperation(value = "Delete a course and return 200 OK without body")
     @DeleteMapping(path = "{id}")
+    @Transactional
     public ResponseEntity<?> deleteCourse(@PathVariable long id) {
-        courseRepository.delete(courseRepository.findById(id).orElseThrow(ResourceNotFoundException::new));
+        Course course = courseRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        courseRepository.delete(course);
+        questionRepository.deleteAllByCourse(course);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

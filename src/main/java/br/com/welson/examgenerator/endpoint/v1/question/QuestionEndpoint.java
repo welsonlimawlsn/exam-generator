@@ -2,6 +2,7 @@ package br.com.welson.examgenerator.endpoint.v1.question;
 
 import br.com.welson.examgenerator.exception.ResourceNotFoundException;
 import br.com.welson.examgenerator.persistence.model.Question;
+import br.com.welson.examgenerator.persistence.repository.CourseRepository;
 import br.com.welson.examgenerator.persistence.repository.QuestionRepository;
 import br.com.welson.examgenerator.util.EndpointUtil;
 import io.swagger.annotations.Api;
@@ -23,11 +24,13 @@ import javax.validation.Valid;
 public class QuestionEndpoint {
 
     private final QuestionRepository questionRepository;
+    private final CourseRepository courseRepository;
     private final EndpointUtil endpointUtil;
 
     @Autowired
-    public QuestionEndpoint(QuestionRepository questionRepository, EndpointUtil endpointUtil) {
+    public QuestionEndpoint(QuestionRepository questionRepository, CourseRepository courseRepository, EndpointUtil endpointUtil) {
         this.questionRepository = questionRepository;
+        this.courseRepository = courseRepository;
         this.endpointUtil = endpointUtil;
     }
 
@@ -37,17 +40,17 @@ public class QuestionEndpoint {
         return new ResponseEntity<>(questionRepository.findById(id).orElseThrow(ResourceNotFoundException::new), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Return a list of question related to course")
-    @GetMapping(path = "list/{courseId}/")
-    public ResponseEntity<?> listQuestions(@ApiParam("Question title") @RequestParam(value = "title", defaultValue = "") String title, @PathVariable long courseId) {
-        return new ResponseEntity<>(questionRepository.listByCourseAndTitle(courseId, title), HttpStatus.OK);
-    }
-
     @ApiOperation(value = "Delete a specific question and return 200 OK without body")
     @DeleteMapping(path = "{id}")
     public ResponseEntity<?> delete(@PathVariable long id) {
         questionRepository.delete(questionRepository.findById(id).orElseThrow(ResourceNotFoundException::new));
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Return a list of question related to course")
+    @GetMapping(path = "list/{courseId}")
+    public ResponseEntity<?> listQuestions(@ApiParam("Question title") @RequestParam(value = "title", defaultValue = "") String title, @PathVariable long courseId) {
+        return new ResponseEntity<>(questionRepository.listByCourseAndTitle(courseId, title), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Update question and return 200 OK without body")
@@ -61,6 +64,7 @@ public class QuestionEndpoint {
     @ApiOperation(value = "Save question and return 201 CREATED with body")
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody Question question) {
+        courseRepository.findById(question.getCourse().getId()).orElseThrow(ResourceNotFoundException::new);
         question.setProfessor(endpointUtil.extractProfessorFromToken());
         return new ResponseEntity<>(questionRepository.save(question), HttpStatus.CREATED);
     }

@@ -2,6 +2,7 @@ package br.com.welson.examgenerator.endpoint.v1.question;
 
 import br.com.welson.examgenerator.endpoint.v1.ProfessorEndpointTest;
 import br.com.welson.examgenerator.endpoint.v1.course.CourseEndpointTest;
+import br.com.welson.examgenerator.persistence.model.Course;
 import br.com.welson.examgenerator.persistence.model.Question;
 import br.com.welson.examgenerator.persistence.repository.QuestionRepository;
 import org.assertj.core.api.Assertions;
@@ -122,7 +123,7 @@ public class QuestionEndpointTest {
     public void deleteQuestionWhenIdExistsShouldReturn200() {
         long id = 1;
         BDDMockito.doNothing().when(questionRepository).deleteById(id);
-        ResponseEntity<String> exchange = testRestTemplate.exchange("/v1/professor/course/question/{id}", HttpMethod.GET, professorHeader, String.class, id);
+        ResponseEntity<String> exchange = testRestTemplate.exchange("/v1/professor/course/question/{id}", HttpMethod.DELETE, professorHeader, String.class, id);
         Assertions.assertThat(exchange.getStatusCodeValue()).isEqualTo(200);
     }
 
@@ -143,6 +144,13 @@ public class QuestionEndpointTest {
     public void createQuestionWhenEverythingIsRightShouldReturn201() {
         Question question = questionRepository.findById(1L).get();
         Assertions.assertThat(createQuestion(question).getStatusCodeValue()).isEqualTo(201);
+    }
+
+    @Test
+    public void createQuestionWhenCourseDoesNotExistsShouldReturn404() {
+        Question question = questionRepository.findById(1L).get();
+        question.setCourse(new Course());
+        Assertions.assertThat(createQuestion(question).getStatusCodeValue()).isEqualTo(404);
     }
 
     private ResponseEntity<String> createQuestion(Question question) {

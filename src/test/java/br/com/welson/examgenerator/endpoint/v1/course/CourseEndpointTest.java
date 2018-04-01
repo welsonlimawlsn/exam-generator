@@ -106,7 +106,7 @@ public class CourseEndpointTest {
     public void deleteCourseWhenIdExistsShouldReturn200() {
         long id = 1;
         BDDMockito.doNothing().when(courseRepository).deleteById(id);
-        ResponseEntity<String> exchange = testRestTemplate.exchange("/v1/professor/course/{id}", HttpMethod.GET, professorHeader, String.class, id);
+        ResponseEntity<String> exchange = testRestTemplate.exchange("/v1/professor/course/{id}", HttpMethod.DELETE, professorHeader, String.class, id);
         Assertions.assertThat(exchange.getStatusCodeValue()).isEqualTo(200);
     }
 
