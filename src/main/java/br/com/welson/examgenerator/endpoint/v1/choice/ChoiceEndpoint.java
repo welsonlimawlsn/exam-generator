@@ -35,7 +35,7 @@ public class ChoiceEndpoint {
         this.endpointUtil = endpointUtil;
     }
 
-    @ApiOperation(value = "Return a list of choices related to the questionId")
+    @ApiOperation(value = "Return a list of choices related to the questionId", response = Choice[].class)
     @GetMapping(path = "list/{questionId}")
     public ResponseEntity<?> listChoices(@PathVariable long questionId) {
         return new ResponseEntity<>(choiceRepository.findAllByQuestionId(questionId), HttpStatus.OK);
