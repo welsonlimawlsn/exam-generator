@@ -1,8 +1,10 @@
 package br.com.welson.examgenerator.endpoint.v1.course;
 
+import br.com.welson.examgenerator.endpoint.v1.deleteservise.CascadeDeleteService;
 import br.com.welson.examgenerator.exception.ResourceNotFoundException;
 import br.com.welson.examgenerator.persistence.model.Course;
 import br.com.welson.examgenerator.persistence.repository.AssignmentRepository;
+import br.com.welson.examgenerator.persistence.repository.ChoiceRepository;
 import br.com.welson.examgenerator.persistence.repository.CourseRepository;
 import br.com.welson.examgenerator.persistence.repository.QuestionRepository;
 import br.com.welson.examgenerator.util.EndpointUtil;
@@ -27,15 +29,13 @@ import javax.validation.Valid;
 public class CourseEndpoint {
 
     private final CourseRepository courseRepository;
-    private final QuestionRepository questionRepository;
-    private final AssignmentRepository assignmentRepository;
+    private final CascadeDeleteService cascadeDeleteService;
     private final EndpointUtil endpointUtil;
 
     @Autowired
-    public CourseEndpoint(CourseRepository courseRepository, QuestionRepository questionRepository, AssignmentRepository assignmentRepository, EndpointUtil endpointUtil) {
+    public CourseEndpoint(CourseRepository courseRepository, CascadeDeleteService cascadeDeleteService, EndpointUtil endpointUtil) {
         this.courseRepository = courseRepository;
-        this.questionRepository = questionRepository;
-        this.assignmentRepository = assignmentRepository;
+        this.cascadeDeleteService = cascadeDeleteService;
         this.endpointUtil = endpointUtil;
     }
 
@@ -56,9 +56,7 @@ public class CourseEndpoint {
     @Transactional
     public ResponseEntity<?> deleteCourse(@PathVariable long id) {
         Course course = courseRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
-        courseRepository.delete(course);
-        questionRepository.deleteAllByCourse(course);
-        assignmentRepository.deleteAllByCourse(course);
+        cascadeDeleteService.deleteCourseAndAllRelatedEntities(course);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

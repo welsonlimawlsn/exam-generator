@@ -42,7 +42,7 @@ public class AssignmentEndpoint {
 
     @ApiOperation(value = "Return a list of assignment related to course", response = Assignment[].class)
     @GetMapping(path = "list/{courseId}")
-    public ResponseEntity<?> listAssignments(@PathVariable long courseId, @ApiParam(value = "Assignment title", defaultValue = "") String title) {
+    public ResponseEntity<?> listAssignments(@PathVariable long courseId, @ApiParam(value = "Assignment title", defaultValue = "") @RequestParam(value = "title", defaultValue = "") String title) {
         return new ResponseEntity<>(assignmentRepository.listByCourseAndTitle(courseId, title), HttpStatus.OK);
     }
 

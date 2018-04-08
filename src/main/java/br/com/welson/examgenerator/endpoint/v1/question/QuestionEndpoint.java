@@ -1,7 +1,9 @@
 package br.com.welson.examgenerator.endpoint.v1.question;
 
+import br.com.welson.examgenerator.endpoint.v1.deleteservise.CascadeDeleteService;
 import br.com.welson.examgenerator.exception.ResourceNotFoundException;
 import br.com.welson.examgenerator.persistence.model.Question;
+import br.com.welson.examgenerator.persistence.repository.ChoiceRepository;
 import br.com.welson.examgenerator.persistence.repository.CourseRepository;
 import br.com.welson.examgenerator.persistence.repository.QuestionRepository;
 import br.com.welson.examgenerator.util.EndpointUtil;
@@ -11,6 +13,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,12 +28,14 @@ public class QuestionEndpoint {
 
     private final QuestionRepository questionRepository;
     private final CourseRepository courseRepository;
+    private final CascadeDeleteService cascadeDeleteService;
     private final EndpointUtil endpointUtil;
 
     @Autowired
-    public QuestionEndpoint(QuestionRepository questionRepository, CourseRepository courseRepository, EndpointUtil endpointUtil) {
+    public QuestionEndpoint(QuestionRepository questionRepository, CourseRepository courseRepository, CascadeDeleteService cascadeDeleteService, EndpointUtil endpointUtil) {
         this.questionRepository = questionRepository;
         this.courseRepository = courseRepository;
+        this.cascadeDeleteService = cascadeDeleteService;
         this.endpointUtil = endpointUtil;
     }
 
@@ -42,8 +47,10 @@ public class QuestionEndpoint {
 
     @ApiOperation(value = "Delete a specific question and return 200 OK without body")
     @DeleteMapping(path = "{id}")
+    @Transactional
     public ResponseEntity<?> delete(@PathVariable long id) {
-        questionRepository.delete(questionRepository.findById(id).orElseThrow(ResourceNotFoundException::new));
+        Question question = questionRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        cascadeDeleteService.deleteQuestionAndAllRelatedEntities(question);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
