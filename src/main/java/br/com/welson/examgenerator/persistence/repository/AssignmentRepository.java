@@ -2,7 +2,6 @@ package br.com.welson.examgenerator.persistence.repository;
 
 import br.com.welson.examgenerator.persistence.model.Assignment;
 import br.com.welson.examgenerator.persistence.model.Course;
-import br.com.welson.examgenerator.persistence.model.Question;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 

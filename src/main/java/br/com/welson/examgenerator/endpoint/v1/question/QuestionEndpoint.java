@@ -3,7 +3,6 @@ package br.com.welson.examgenerator.endpoint.v1.question;
 import br.com.welson.examgenerator.endpoint.v1.deleteservise.CascadeDeleteService;
 import br.com.welson.examgenerator.exception.ResourceNotFoundException;
 import br.com.welson.examgenerator.persistence.model.Question;
-import br.com.welson.examgenerator.persistence.repository.ChoiceRepository;
 import br.com.welson.examgenerator.persistence.repository.CourseRepository;
 import br.com.welson.examgenerator.persistence.repository.QuestionRepository;
 import br.com.welson.examgenerator.util.EndpointUtil;

@@ -8,13 +8,13 @@ import org.springframework.security.data.repository.query.SecurityEvaluationCont
 @SpringBootApplication
 public class ExamGeneratorApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ExamGeneratorApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ExamGeneratorApplication.class, args);
+    }
 
-	@Bean
-	public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
-	    return new SecurityEvaluationContextExtension();
+    @Bean
+    public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
+        return new SecurityEvaluationContextExtension();
     }
 
 }

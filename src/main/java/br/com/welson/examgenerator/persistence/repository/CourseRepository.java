@@ -3,8 +3,6 @@ package br.com.welson.examgenerator.persistence.repository;
 import br.com.welson.examgenerator.persistence.model.Course;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.Optional;
-
 /**
  * @author Welson Teles on 3/19/2018
  */
